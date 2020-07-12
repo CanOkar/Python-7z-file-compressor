@@ -22,8 +22,6 @@ class Logging:
         logFile = open("log.txt", "a")
         logFile.write("Compression process has finished on " + str(datetime.datetime.now()) + "\n")
         logFile.write(str(datetime.date.today()) + ".7z file has been successfully created \n")
-        logFile.write("--------------------------------------------------------------"
-                      "---------------------------\n")
         logFile.close()
 
 
@@ -35,15 +33,16 @@ def calculateHash(fileName):  # purpose of calculateHash is obvious as its name 
     return hashValue.hexdigest()
 
 
-createLogFile = Logging()
-createLogFile.create()
+logProcess = Logging()
+logProcess.create()
 
-logDateofToday = Logging()
-logDateofToday.today()
+
+logProcess.today()
 
 FDBfiles = glob.glob('*.FDB')  # reads file names from disk
 collectionOfHashes = {}
 
+print("Hash calculation process has started...\n")
 for FDBfile in FDBfiles:  # fills dictionary with calculated hash and corresponding file name
     collectionOfHashes[FDBfile] = calculateHash(FDBfile)
 
@@ -56,7 +55,9 @@ logFile.close()
 willBeDeleted = []
 x = 1
 y = 1
+print("Hash calculation process has finished...\n")
 
+print("Deletion process of same files has started...\n")
 for dbName, calculatedHash in collectionOfHashes.items():
 
     for i in range(x, len(collectionOfHashes)):
@@ -75,14 +76,14 @@ logFile.write("Deleted files because of being same : \n")
 for yx in willBeDeleted:
     os.remove(yx)
     logFile.write(yx + " Deleted \n")
+print("Deletion process of same files has finished...\n")
 
 
-compressionStarted = Logging()
-compressionStarted.started()
-
+logProcess.started()
+print("Compression process of same files has started...\n")
 os.system("start /wait cmd /c 7z.exe a -t7z -m0=lzma2 -mx=9 -sdel compressed.7z *.FDB")
 
 os.rename("compressed.7z", str(datetime.date.today()) + ".7z")
 
-compressionFinished = Logging()
-compressionFinished.finished()
+print("Compression process of same files has finished...\n")
+logProcess.finished()
